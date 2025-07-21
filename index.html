@@ -83,14 +83,15 @@
 
     // Firebase configuration (your own config)
     const firebaseConfig = {
-      apiKey: "AIzaSyC1WiiyjY6ocLt6vtuUrAW48Pq8EE9LWWA",
-      authDomain: "inventorystore-d6a4b.firebaseapp.com",
-      projectId: "inventorystore-d6a4b",
-      storageBucket: "inventorystore-d6a4b.firebasestorage.app",
-      messagingSenderId: "261624701379",
-      appId: "1:261624701379:web:3fc06ce54af84da0051d76",
-      measurementId: "G-RNP0DM4S50"
-    };
+  apiKey: "AIzaSyC1WiiyjY6ocLt6vtuUrAW48Pq8EE9LWWA",
+  authDomain: "inventorystore-d6a4b.firebaseapp.com",
+  projectId: "inventorystore-d6a4b",
+  storageBucket: "inventorystore-d6a4b.appspot.com", // ✅ FIXED
+  messagingSenderId: "261624701379",
+  appId: "1:261624701379:web:3fc06ce54af84da0051d76",
+  measurementId: "G-RNP0DM4S50"
+};
+
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
