@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Firebase Todo App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    #taskInput {
+      padding: 10px;
+      width: 200px;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    ul {
+      margin-top: 20px;
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid #ccc;
+      margin-bottom: 8px;
+      width: 280px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .delete-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Todo App</h1>
+  <input type="text" id="taskInput" placeholder="Enter task">
+  <button onclick="addTask()">Add Task</button>
+  <ul id="taskList"></ul>
+
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      onSnapshot,
+      deleteDoc,
+      doc,
+      serverTimestamp,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+    // Firebase configuration (your own config)
+    const firebaseConfig = {
+      apiKey: "AIzaSyC1WiiyjY6ocLt6vtuUrAW48Pq8EE9LWWA",
+      authDomain: "inventorystore-d6a4b.firebaseapp.com",
+      projectId: "inventorystore-d6a4b",
+      storageBucket: "inventorystore-d6a4b.firebasestorage.app",
+      messagingSenderId: "261624701379",
+      appId: "1:261624701379:web:3fc06ce54af84da0051d76",
+      measurementId: "G-RNP0DM4S50"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+
+    // ✅ Add task and store in Firestore
+    window.addTask = async function () {
+      const taskText = taskInput.value.trim();
+      if (taskText === '') return;
+
+      await addDoc(collection(db, "todos"), {
+        task: taskText,
+        createdAt: serverTimestamp()
+      });
+
+      taskInput.value = '';
+    }
+
+    // ✅ Real-time listener for tasks
+    const q = query(collection(db, "todos"), orderBy("createdAt"));
+
+    onSnapshot(q, snapshot => {
+      taskList.innerHTML = '';
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${data.task}
+          <button class="delete-btn" onclick="deleteTask('${docSnap.id}')">X</button>
+        `;
+        taskList.appendChild(li);
+      });
+    });
+
+    // ✅ Delete task
+    window.deleteTask = async function (id) {
+      await deleteDoc(doc(db, "todos", id));
+    }
+  </script>
+</body>
+</html>
